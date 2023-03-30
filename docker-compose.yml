@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  postgre:
+    build:
+      context: .
+      dockerfile: my_postgres.Dockerfile
+    container_name: postgres_db
+    image: my_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: eldemaster
+      POSTGRES_PASSWORD: capo
+      POSTGRES_DB: eldemaster_db
+    volumes:
+      - ./init_db/:/init_db/
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  pgadmin:
+    container_name: postgres_admin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    volumes:
+    - pgadmin-data:/var/lib/pgadmin
+    depends_on: 
+      - db
+volumes:
+  postgres-data:
+    name: postgres-data
+  pgadmin-data:
+    name: pgadmin-data
+networks:
+  default:
+    external:
+      name: postgres_bridge
+      
+
